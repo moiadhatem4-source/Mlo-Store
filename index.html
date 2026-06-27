@@ -6,46 +6,117 @@
     <title>MLO Store | المنصة الفخمة</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <!-- استدعاء مكتبة الأيقونات الاحترافية Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
+    <!-- الهيدر والشعار -->
     <header>
         <div class="container header-container">
-            <div class="logo" id="mainLogo">MLO Store</div>
+            <div class="logo" id="mainLogo"><i class="fa-solid : 2026-06-27-gemini-v2-personalization-trigger-placeholder"></i> MLO Store</div>
             <div class="nav-buttons">
-                <button class="nav-btn" onclick="switchView('store')">المتجر الرئيسي</button>
-                <button class="nav-btn" onclick="switchView('seller')">بوابة التجار</button>
+                <button class="nav-btn" onclick="showStoreFront()"><i class="fa-solid fa-store"></i> المتجر الرئيسي</button>
+                <button class="nav-btn" onclick="switchView('sellerAuthView')"><i class="fa-solid fa-briefcase"></i> بوابة التجار</button>
             </div>
         </div>
     </header>
 
     <div class="container">
+        
+        <!-- 1️⃣ واجهة المتجر الرئيسي / أو بروفايل تاجر معين -->
         <div id="storeView">
-            <section class="hero">
-                <h1>مرحباً بك في MLO Store</h1>
+            <section class="hero" id="storeHero">
+                <h1>MLO Store</h1>
                 <p>تصفح أحدث المنتجات والخدمات الحصرية بأفضل الأسعار</p>
             </section>
 
             <div class="products-grid" id="productsContainer">
-                </div>
+                <!-- المنتجات تظهر هنا -->
+            </div>
         </div>
 
-        <div id="sellerView" style="display: none;">
-            <div class="seller-portal">
-                <h2>لوحة تحكم التاجر 💼</h2>
-                <p style="margin-bottom: 20px;">أضف منتجك الجديد ليظهر فوراً في المتجر الرئيسي للزبائن</p>
+        <!-- 2️⃣ واجهة تسجيل الدخول / الاشتراك للتجار -->
+        <div id="sellerAuthView" style="display: none;">
+            <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 450px; margin: 40px auto; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+                <h2 style="color: #00ffcc; font-size: 1.8rem;" id="authTitle"><i class="fa-solid fa-key"></i> دخول التجار</h2>
+                <p style="color: #888; margin-bottom: 20px;" id="authDesc">أدخل بياناتك السرية لإدارة إمبراطوريتك</p>
                 
-                <div style="max-width: 400px; margin: 0 auto; text-align: right;">
-                    <label style="display:block; margin-bottom: 5px;">اسم المنتج:</label>
-                    <input type="text" id="prodName" placeholder="مثال: سماعة بلوتوث احترافية" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 15px;">
+                <!-- فورم الدخول -->
+                <div id="loginForm" style="text-align: right;">
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-user"></i> اسم المستخدم الفريد (إنجليزي):</label>
+                    <input type="text" id="loginUsername" placeholder="moaid_shop" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
                     
-                    <label style="display:block; margin-bottom: 5px;">السعر (SDG):</label>
-                    <input type="number" id="prodPrice" placeholder="مثال: 5000" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 15px;">
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-lock"></i> رمز الدخول السري:</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
                     
-                    <label style="display:block; margin-bottom: 5px;">رابط صورة المنتج:</label>
-                    <input type="text" id="prodImage" placeholder="ضع رابط الصورة هنا" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 20px;">
+                    <button onclick="loginSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem;">تسجيل الدخول المباشر <i class="fa-solid fa-paper-plane"></i></button>
+                    <p style="color:#aaa; text-align:center; font-size:0.9rem;">ليس لديك حساب بائع؟ <span onclick="toggleAuthMode(true)" style="color:#00ffcc; cursor:pointer; text-decoration:underline; font-weight: bold;">سجل حساباً جديداً</span></p>
+                    <p style="color:#aaa; text-align:center; font-size:0.9rem; margin-top:10px;"><span onclick="forgotPassword()" style="color:#ff3366; cursor:pointer; text-decoration:underline;"><i class="fa-solid fa-circle-question"></i> هل نسيت رمز الدخول؟</span></p>
+                </div>
+
+                <!-- فورم التسجيل الجديد -->
+                <div id="registerForm" style="text-align: right; display:none;">
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-shop"></i> اسم متجرك الفخم:</label>
+                    <input type="text" id="regStoreName" placeholder="مثال: متجر البرنس" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
                     
-                    <button onclick="handleUploadProduct()" style="width: 100%; background: var(--primary); color: var(--bg-dark); border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">نشر المنتج الآن 🚀</button>
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-link"></i> يوزر المتجر (رابطك الخاص - إنجليزي بدون مسافات):</label>
+                    <input type="text" id="regUsername" placeholder="مثال: moiad1" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-lock"></i> اختر رمز دخولك السري:</label>
+                    <input type="password" id="regPassword" placeholder="اكتب كلمة سر تحفظها" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    
+                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-shield-halved"></i> سؤال الأمان (للاسترداد عند النسيان): ما هي لعبتك أو صديقك المفضل؟</label>
+                    <input type="text" id="regSecurityAnswer" placeholder="إجابتك السرية هنا" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 20px; box-sizing: border-box;">
+                    
+                    <button onclick="registerSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem;">إنشاء حساب بائع والانطلاق <i class="fa-solid fa-rocket"></i></button>
+                    <p style="color:#aaa; text-align:center; font-size:0.9rem;">لديك حساب بالفعل؟ <span onclick="toggleAuthMode(false)" style="color:#00ffcc; cursor:pointer; text-decoration:underline; font-weight: bold;">سجل دخولك من هنا</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3️⃣ لوحة تحكم التاجر بعد تسجيل دخوله بنجاح -->
+        <div id="sellerDashboardView" style="display: none;">
+            <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 600px; margin: 40px auto; text-align: center;">
+                <h2 style="color: #00ffcc;"><i class="fa-solid fa-sliders"></i> لوحة إدارة متجرك</h2>
+                <p id="sellerWelcomeMsg" style="color:#fff; margin-bottom: 10px; font-weight: bold;"></p>
+                <p id="sellerProfileLink" style="color:#00ffcc; background:#0d0d12; padding:12px; border-radius:8px; font-size:0.9rem; word-break:break-all; border: 1px dashed #00ffcc;"></p>
+                
+                <hr style="border:0; border-top:1px solid #2a2a35; margin:25px 0;">
+                
+                <h3 style="color:#fff; text-align:right; margin-bottom:15px;"><i class="fa-solid fa-plus"></i> إضافة منتج جديد إلى رفوفك:</h3>
+                <div style="text-align: right;">
+                    <label style="color:#fff;">اسم المنتج:</label>
+                    <input type="text" id="prodName" placeholder="مثال: حساب ببجي مشحون" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    
+                    <label style="color:#fff;">السعر العملي (SDG):</label>
+                    <input type="number" id="prodPrice" placeholder="مثال: 7500" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    
+                    <label style="color:#fff;">رابط صورة المنتج (اختياري):</label>
+                    <input type="text" id="prodImage" placeholder="ضع رابط الصورة هنا" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 20px; box-sizing: border-box;">
+                    
+                    <button onclick="handleUploadProduct()" style="width: 100%; background: #00ffcc; color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:1rem;"><i class="fa-solid fa-bolt"></i> نشر المنتج للجميع فوراً</button>
+                    <button onclick="logoutSeller()" style="width: 100%; background: #ff3366; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top:12px;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4️⃣ لوحة الإدارة العليا السرية (خاصة بـ مويد 👑) -->
+        <div id="adminView" style="display: none; background: #1a1a26; padding: 30px; border-radius: 16px; border: 1px solid #ff3366; margin-top: 30px; box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);">
+            <h2 style="color: #ff3366; text-align: center; margin-bottom: 5px;"><i class="fa-solid fa-user-shield"></i> لوحة القيادة والتحكم (المشرف مويد)</h2>
+            <p style="color: #aaa; text-align: center; margin-bottom: 25px;">إدارة التجار، التحكم بالشارات، وحذف السجلات المخالفة بنقرة واحدة.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                <!-- قسم إدارة البائعين والأوائل -->
+                <div style="background:#0d0d12; padding:20px; border-radius:12px; border:1px solid #333;">
+                    <h3 style="color:#00ffcc; margin-bottom:15px;"><i class="fa-solid fa-users"></i> قائمة البائعين المسجلين (مرتبين بالأقدمية)</h3>
+                    <div id="adminSellersList"></div>
+                </div>
+
+                <!-- قسم إدارة جميع المنتجات المعروضة -->
+                <div style="background:#0d0d12; padding:20px; border-radius:12px; border:1px solid #333;">
+                    <h3 style="color:#ff3366; margin-bottom:15px;"><i class="fa-solid fa-box-open"></i> التحكم بكافة معروضات المنصة</h3>
+                    <div id="adminProductsList"></div>
                 </div>
             </div>
         </div>
