@@ -1,4 +1,3 @@
-// إعدادات Firebase الخاصة بمشروعك (mlo-bece1)
 const firebaseConfig = {
     apiKey: "AIzaSyAfDgxELrgDb0LEF20OowC2x42dWphVY38",
     authDomain: "mlo-bece1.firebaseapp.com",
@@ -10,131 +9,317 @@ const firebaseConfig = {
     databaseURL: "https://mlo-bece1-default-rtdb.firebaseio.com/"
 };
 
-// تفعيل فايربيس وقاعدة البيانات
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// سلة التسوق المحلية
-let cart = [];
+let currentSeller = null;
+let allSellersOrdered = [];
 
-// جلب المنتجات وعرضها تلقائياً عند حدوث أي تغيير في الداتابيز
-database.ref('products').on('value', (snapshot) => {
-    const productsContainer = document.getElementById('productsContainer');
-    if (!productsContainer) return;
+window.onload = function() {
+    database.ref('sellers').orderByChild('timestamp').on('value', (snapshot) => {
+        allSellersOrdered = [];
+        snapshot.forEach((childSnapshot) => {
+            allSellersOrdered.push({
+                username: childSnapshot.key,
+                ...childSnapshot.val()
+            });
+        });
+        loadStoreData();
+    });
+};
+
+// توليد الشارات باستخدام أيقونات Font Awesome النظيفة
+function getSellerBadge(username) {
+    const index = allSellersOrdered.findIndex(s => s.username === username);
+    const sellerData = allSellersOrdered.find(s => s.username === username);
     
-    productsContainer.innerHTML = ""; // تصفير الحاوية قبل العرض
-    
-    const data = snapshot.val();
-    if (!data) {
-        productsContainer.innerHTML = `<p style="color: #888; grid-column: 1/-1; text-align: center; font-family: 'Cairo', sans-serif;">لا توجد منتجات معروضة حالياً. كن أول من يضيف منتجاً!</p>`;
+    let badge = "";
+    // إذا كان من أول 5 مسجلين تظهر شارة VIP البرمجية الفخمة باللون الذهبي
+    if (index !== -1 && index < 5) {
+        badge += ` <span style="background: linear-gradient(135deg, #ffcc00, #ff9900); color: #000; padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 0 8px rgba(255,204,0,0.4);"><i class="fa-solid fa-crown"></i> VIP</span>`;
+    }
+    // شارة النجمة الموثقة المستوحاة من تلجرام (أيقونة النجمة داخل دائرة باللون الأزرق المميز للتوثيق)
+    if (sellerData && sellerData.isPremium) {
+        badge += ` <i class="fa-solid fa-circle-check" style="color: #00b3ff; margin-right: 4px; font-size: 0.95rem;" title="بائع موثق"></i>`;
+    }
+    return badge;
+}
+
+function loadStoreData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopUsername = urlParams.get('shop');
+
+    if (shopUsername) {
+        database.ref('sellers').child(shopUsername).once('value', (snapshot) => {
+            const seller = snapshot.val();
+            if (seller) {
+                const badge = getSellerBadge(shopUsername);
+                document.getElementById('storeHero').innerHTML = `
+                    <h1>${seller.storeName} ${badge}</h1>
+                    <p>المتجر الرسمي المعتمد للبائع: @${shopUsername}</p>
+                    <button onclick="showStoreFront()" style="background:#00ffcc; color:#0d0d12; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; margin-top:12px;"><i class="fa-solid fa-arrow-left"></i> العودة للمركز المشترك</button>
+                `;
+                loadProducts(shopUsername);
+            } else {
+                alert("الحساب غير موجود!");
+                showStoreFront();
+            }
+        });
+    } else {
+        document.getElementById('storeHero').innerHTML = `
+            <h1>MLO Store</h1>
+            <p>تصفح أحدث المنتجات والخدمات الحصرية بأفضل الأسعار</p>
+        `;
+        loadProducts(null);
+    }
+    updateAdminPanel();
+}
+
+function loadProducts(filterUsername) {
+    database.ref('products').on('value', (snapshot) => {
+        const container = document.getElementById('productsContainer');
+        if (!container) return;
+        container.innerHTML = "";
+
+        const data = snapshot.val();
+        if (!data) {
+            container.innerHTML = `<p style="color: #888; grid-column: 1/-1; text-align: center;">لا توجد معروضات متاحة حالياً.</p>`;
+            return;
+        }
+
+        Object.keys(data).forEach(key => {
+            const product = data[key];
+            if (filterUsername && product.sellerUsername !== filterUsername) return;
+            
+            const imgUrl = product.image ? product.image : "https://via.placeholder.com/260x200/16161f/00ffcc?text=MLO+Store";
+            const badge = getSellerBadge(product.sellerUsername);
+
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${imgUrl}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p style="font-size:0.85rem; color:#aaa; margin-bottom: 8px;">التاجر: <a href="?shop=${product.sellerUsername}" style="color:#00ffcc; text-decoration:none; font-weight:bold;">@${product.sellerUsername}</a> ${badge}</p>
+                <p class="price">${product.price} SDG</p>
+                <button class="add-to-cart-btn" onclick="addToCart('${key}', '${product.name}')"><i class="fa-solid fa-cart-plus"></i> إضافة للسلة</button>
+            `;
+            container.appendChild(card);
+        });
+    });
+}
+
+function toggleAuthMode(isRegister) {
+    document.getElementById('loginForm').style.display = isRegister ? 'none' : 'block';
+    document.getElementById('registerForm').style.display = isRegister ? 'block' : 'none';
+    document.getElementById('authTitle').innerHTML = isRegister ? '<i class="fa-solid fa-user-plus"></i> تسجيل بائع جديد' : '<i class="fa-solid fa-key"></i> دخول التجار';
+}
+
+function registerSeller() {
+    const storeName = document.getElementById('regStoreName').value.trim();
+    const username = document.getElementById('regUsername').value.trim().toLowerCase();
+    const password = document.getElementById('regPassword').value.trim();
+    const securityAnswer = document.getElementById('regSecurityAnswer').value.trim().toLowerCase();
+
+    if (!storeName || !username || !password || !securityAnswer) {
+        alert("يرجى تعبئة كافة الحقول المتاحة!");
         return;
     }
-    
-    // التكرار لعرض كل منتج
-    Object.keys(data).forEach(key => {
-        const product = data[key];
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.style.cssText = `
-            background-color: #16161f;
-            border: 1px solid #2a2a35;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        `;
-        
-        const imgUrl = product.image ? product.image : "https://via.placeholder.com/260x200/16161f/00ffcc?text=MLO+Store";
-        
-        productCard.innerHTML = `
-            <img src="${imgUrl}" alt="${product.name}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 10px; color: #fff;">${product.name}</h3>
-            <p style="color: #00ffcc; font-weight: bold; margin-bottom: 15px;">${product.price} SDG</p>
-            <button onclick="addToCart('${key}', '${product.name}')" style="
-                background-color: #00ffcc; 
-                color: #0d0d12; 
-                border: none; 
-                padding: 8px 15px; 
-                border-radius: 6px; 
-                font-weight: bold; 
-                cursor: pointer;
-                width: 100%;
-            ">إضافة للسلة</button>
-        `;
-        productsContainer.appendChild(productCard);
-    });
-});
 
-// دالة رفع المنتج للتاجر
+    database.ref('sellers').child(username).once('value', (snapshot) => {
+        if (snapshot.exists()) {
+            alert("يوزر المتجر هذا محجوز لتاجر آخر!");
+        } else {
+            database.ref('sellers').child(username).set({
+                storeName: storeName,
+                password: password,
+                securityAnswer: securityAnswer,
+                isPremium: false,
+                timestamp: Date.now()
+            }).then(() => {
+                alert(`تم التسجيل بنجاح!`);
+                toggleAuthMode(false);
+            });
+        }
+    });
+}
+
+function loginSeller() {
+    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    database.ref('sellers').child(username).once('value', (snapshot) => {
+        const seller = snapshot.val();
+        if (seller && seller.password === password) {
+            currentSeller = username;
+            const badge = getSellerBadge(username);
+            alert(`تم تسجيل الدخول بنجاح!`);
+            
+            document.getElementById('sellerWelcomeMsg').innerHTML = `المتجر الفعال: ${seller.storeName} (@${username}) ${badge}`;
+            document.getElementById('sellerProfileLink').innerHTML = `رابط بروفايلك الخاص للزبائن: <br><a href="?shop=${username}" target="_blank" style="color:#00ffcc; text-decoration: underline;">${window.location.origin}${window.location.pathname}?shop=${username}</a>`;
+            
+            switchView('sellerDashboardView');
+        } else {
+            alert("الرمز السري أو اسم المستخدم غير صحيح!");
+        }
+    });
+}
+
+function forgotPassword() {
+    const username = prompt("أدخل يوزر حسابك المنسي:");
+    if (!username) return;
+
+    database.ref('sellers').child(username.toLowerCase()).once('value', (snapshot) => {
+        const seller = snapshot.val();
+        if (!seller) {
+            alert("هذا اليوزر غير مسجل بالمنصة!");
+            return;
+        }
+
+        const answer = prompt(`سؤال الأمان التحققي:\nما هي لعبتك أو صديقك المفضل؟`);
+        if (answer && answer.trim().toLowerCase() === seller.securityAnswer) {
+            alert(`رمز دخولك السري هو: [ ${seller.password} ]`);
+        } else if (answer !== null) {
+            alert("إجابة سؤال الأمان خاطئة!");
+        }
+    });
+}
+
 function handleUploadProduct() {
+    if (!currentSeller) return;
+
     const name = document.getElementById('prodName').value.trim();
     const price = document.getElementById('prodPrice').value.trim();
     const image = document.getElementById('prodImage').value.trim();
-    
+
     if (!name || !price) {
-        alert("⚠️ الرجاء كتابة اسم المنتج والسعر على الأقل!");
+        alert("يرجى كتابة اسم المنتج وتحديد السعر!");
         return;
     }
-    
-    const newProductRef = database.ref('products').push();
-    newProductRef.set({
+
+    database.ref('products').push().set({
         name: name,
         price: parseInt(price),
-        image: image
+        image: image,
+        sellerUsername: currentSeller
     }).then(() => {
-        alert("🚀 تم نشر منتجك بنجاح وسيظهر للجميع الآن!");
+        alert("تم النشر بنجاح!");
         document.getElementById('prodName').value = "";
         document.getElementById('prodPrice').value = "";
         document.getElementById('prodImage').value = "";
-        switchView('store');
-    }).catch((error) => {
-        alert("❌ خطأ في الاتصال بقاعدة البيانات: " + error.message);
+        showStoreFront();
     });
 }
 
-// إضافة للسلة
 function addToCart(id, name) {
-    cart.push({ id, name });
-    alert(`✓ تم إضافة "${name}" إلى السلة!`);
+    alert(`تم إضافة "${name}" إلى سلة التسوق!`);
 }
 
-// التبديل بين واجهات المتجر والتاجر
+function logoutSeller() {
+    currentSeller = null;
+    switchView('sellerAuthView');
+}
+
+function showStoreFront() {
+    window.history.pushState({}, document.title, window.location.pathname);
+    loadStoreData();
+    switchView('store');
+}
+
 function switchView(view) {
-    const storeView = document.getElementById('storeView');
-    const sellerView = document.getElementById('sellerView');
-    
-    if (view === 'store') {
-        storeView.style.display = 'block';
-        sellerView.style.display = 'none';
-    } else if (view === 'seller') {
-        storeView.style.display = 'none';
-        sellerView.style.display = 'block';
-    }
+    document.getElementById('storeView').style.display = view === 'store' ? 'block' : 'none';
+    document.getElementById('sellerAuthView').style.display = view === 'sellerAuthView' ? 'block' : 'none';
+    document.getElementById('sellerDashboardView').style.display = view === 'sellerDashboardView' ? 'block' : 'none';
+    document.getElementById('adminView').style.display = view === 'admin' ? 'block' : 'none';
 }
 
-// ─── ميزة النقر 3 مرات السرية لشعار الموقع ───
-let logoClickCount = 0;
-let logoTimer;
-const mainLogo = document.getElementById('mainLogo');
+// تفعيل الثلاث ضغطات السرية للوجو (مويد)
+let clickCount = 0;
+let clickTimer;
+document.getElementById('mainLogo').addEventListener('click', () => {
+    clickCount++;
+    clearTimeout(clickTimer);
+    if (clickCount === 3) {
+        clickCount = 0;
+        const pass = prompt("بوابة التحكم العليا:\nالرجاء إدخال رمز المشرف:");
+        if (pass === "1221") {
+            alert("تم تفعيل صلاحيات المشرف!");
+            switchView('admin');
+        } else if (pass !== null) {
+            alert("الرمز خاطئ!");
+        }
+        return;
+    }
+    clickTimer = setTimeout(() => { clickCount = 0; }, 500);
+});
 
-if (mainLogo) {
-    mainLogo.addEventListener('click', () => {
-        logoClickCount++;
-        clearTimeout(logoTimer);
-        if (logoClickCount === 3) {
-            logoClickCount = 0;
-            openAdminModal();
+function updateAdminPanel() {
+    const sellersListContainer = document.getElementById('adminSellersList');
+    const productsListContainer = document.getElementById('adminProductsList');
+    
+    if (!sellersListContainer || !productsListContainer) return;
+
+    sellersListContainer.innerHTML = "";
+    if (allSellersOrdered.length === 0) {
+        sellersListContainer.innerHTML = "<p style='color:#666;'>لا يوجد تجار مسجلين حالياً.</p>";
+    } else {
+        allSellersOrdered.forEach((seller, index) => {
+            const item = document.createElement('div');
+            item.style.cssText = "display:flex; justify-content:space-between; background:#16161f; padding:12px; margin-bottom:10px; border-radius:8px; align-items:center; border:1px solid #2a2a35;";
+            
+            let rankText = `[#${index + 1}]`;
+            let badgeText = getSellerBadge(seller.username);
+
+            item.innerHTML = `
+                <div>
+                    <span style="color:#ffcc00; font-weight:bold; margin-left:5px;">${rankText}</span>
+                    <strong style="color:#fff;">${seller.storeName}</strong> 
+                    <span style="color:#888; font-size:0.85rem;">(@${seller.username})</span>
+                    ${badgeText}
+                </div>
+                <div>
+                    <button onclick="togglePremiumSeller('${seller.username}', ${seller.isPremium})" style="background:#00b3ff; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; margin-left:5px;">
+                        ${seller.isPremium ? '<i class="fa-solid fa-circle-minus"></i> إلغاء التوثيق' : '<i class="fa-solid fa-circle-check"></i> توثيق الحساب'}
+                    </button>
+                    <button onclick="deleteSellerAccount('${seller.username}')" style="background:#ff3366; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-trash"></i> حذف</button>
+                </div>
+            `;
+            sellersListContainer.appendChild(item);
+        });
+    }
+
+    database.ref('products').once('value', (snapshot) => {
+        productsListContainer.innerHTML = "";
+        const data = snapshot.val();
+        if (!data) {
+            productsListContainer.innerHTML = "<p style='color:#666;'>لا توجد منتجات معروضة حالياً.</p>";
             return;
         }
-        logoTimer = setTimeout(() => { logoClickCount = 0; }, 500);
+
+        Object.keys(data).forEach(key => {
+            const product = data[key];
+            const item = document.createElement('div');
+            item.style.cssText = "display:flex; justify-content:space-between; background:#16161f; padding:10px; margin-bottom:10px; border-radius:8px; align-items:center; border:1px solid #2a2a35;";
+            item.innerHTML = `
+                <span style="color:#fff;"><i class="fa-solid fa-box"></i> ${product.name} (${product.price} SDG) | التاجر: @${product.sellerUsername}</span>
+                <button onclick="deleteProductAdmin('${key}')" style="background:#ff3366; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-trash"></i> حذف</button>
+            `;
+            productsListContainer.appendChild(item);
+        });
     });
 }
 
-function openAdminModal() {
-    const password = prompt("🔐 نظام الأمان: أدخل الرمز السري للمشرف:");
-    if (password === "1221") {
-        alert("✓ مرحباً بك يا مدير المنصة! تم الدخول بنجاح.");
-    } else if (password !== null) {
-        alert("❌ الرمز السري خاطئ!");
+function togglePremiumSeller(username, currentStatus) {
+    database.ref('sellers').child(username).update({ isPremium: !currentStatus }).then(() => alert("تم تحديث الرتبة!"));
+}
+
+function deleteSellerAccount(username) {
+    if (confirm(`هل أنت متأكد من حذف الحساب [@${username}]؟`)) {
+        database.ref('sellers').child(username).remove().then(() => alert("تم حذف الحساب."));
     }
 }
 
+function deleteProductAdmin(key) {
+    if (confirm("هل تريد إزالة هذا المنتج؟")) {
+        database.ref('products').child(key).remove().then(() => alert("تم حذف المنتج."));
+    }
+}
