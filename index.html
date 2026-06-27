@@ -3,48 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLO Store | منصة التجار المتكاملة</title>
-    <!-- الخطوط -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <!-- ملف الستايل الخارجي -->
+    <title>MLO Store | المنصة الفخمة</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- الهيدر والشعار -->
     <header>
         <div class="container header-container">
             <div class="logo" id="mainLogo">MLO Store</div>
-            <nav>
-                <button class="nav-btn" onclick="switchView('store')">المتجر</button>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="switchView('store')">المتجر الرئيسي</button>
                 <button class="nav-btn" onclick="switchView('seller')">بوابة التجار</button>
-            </nav>
+            </div>
         </div>
     </header>
 
-    <!-- محتوى المتجر الرئيسي -->
-    <main class="container" id="storeView">
-        <section class="hero">
-            <h1>مرحباً بك في MLO Store</h1>
-            <p>منصتك المفضلة للتسوق ودعم التجار المحليين</p>
-        </section>
-        
-        <!-- هنا سيتم عرض المنتجات ديناميكياً بواسطة الجافاسكربت -->
-        <div class="products-grid" id="productsContainer"></div>
-    </main>
+    <div class="container">
+        <div id="storeView">
+            <section class="hero">
+                <h1>مرحباً بك في MLO Store</h1>
+                <p>تصفح أحدث المنتجات والخدمات الحصرية بأفضل الأسعار</p>
+            </section>
 
-    <!-- بوابة التجار -->
-    <main class="container" id="sellerView" style="display: none;">
-        <section class="seller-portal">
-            <h2>لوحة تحكم التاجر</h2>
-            <p>أدخل التوكن الخاص بك لإدارة منتجاتك ورؤية مبيعاتك.</p>
-        </section>
-    </main>
+            <div class="products-grid" id="productsContainer">
+                </div>
+        </div>
 
-    <!-- ملف البرمجة الخارجي -->
+        <div id="sellerView" style="display: none;">
+            <div class="seller-portal">
+                <h2>لوحة تحكم التاجر 💼</h2>
+                <p style="margin-bottom: 20px;">أضف منتجك الجديد ليظهر فوراً في المتجر الرئيسي للزبائن</p>
+                
+                <div style="max-width: 400px; margin: 0 auto; text-align: right;">
+                    <label style="display:block; margin-bottom: 5px;">اسم المنتج:</label>
+                    <input type="text" id="prodName" placeholder="مثال: سماعة بلوتوث احترافية" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 15px;">
+                    
+                    <label style="display:block; margin-bottom: 5px;">السعر (SDG):</label>
+                    <input type="number" id="prodPrice" placeholder="مثال: 5000" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 15px;">
+                    
+                    <label style="display:block; margin-bottom: 5px;">رابط صورة المنتج:</label>
+                    <input type="text" id="prodImage" placeholder="ضع رابط الصورة هنا" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background:#0d0d12; color:#fff; margin-bottom: 20px;">
+                    
+                    <button onclick="handleUploadProduct()" style="width: 100%; background: var(--primary); color: var(--bg-dark); border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">نشر المنتج الآن 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script src="script.js"></script>
 </body>
 </html>
-
