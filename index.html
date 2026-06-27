@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLO Store | منصة التجار المتكاملة</title>
+    <!-- الخطوط -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <!-- ملف الستايل الخارجي -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر والشعار -->
+    <header>
+        <div class="container header-container">
+            <div class="logo" id="mainLogo">MLO Store</div>
+            <nav>
+                <button class="nav-btn" onclick="switchView('store')">المتجر</button>
+                <button class="nav-btn" onclick="switchView('seller')">بوابة التجار</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- محتوى المتجر الرئيسي -->
+    <main class="container" id="storeView">
+        <section class="hero">
+            <h1>مرحباً بك في MLO Store</h1>
+            <p>منصتك المفضلة للتسوق ودعم التجار المحليين</p>
+        </section>
+        
+        <!-- هنا سيتم عرض المنتجات ديناميكياً بواسطة الجافاسكربت -->
+        <div class="products-grid" id="productsContainer"></div>
+    </main>
+
+    <!-- بوابة التجار -->
+    <main class="container" id="sellerView" style="display: none;">
+        <section class="seller-portal">
+            <h2>لوحة تحكم التاجر</h2>
+            <p>أدخل التوكن الخاص بك لإدارة منتجاتك ورؤية مبيعاتك.</p>
+        </section>
+    </main>
+
+    <!-- ملف البرمجة الخارجي -->
+    <script src="script.js"></script>
+</body>
+</html>
+
