@@ -35,28 +35,26 @@
             </div>
 
             <div class="categories-bar" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
-                <button class="cat-btn active-cat" onclick="filterByCategory('all', this)" style="background: #00ffcc; color: #0d0d12; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">الكل</button>
+                <button class="cat-btn" onclick="filterByCategory('all', this)" style="background: #00ffcc; color: #0d0d12; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">الكل</button>
                 <button class="cat-btn" onclick="filterByCategory('clothes', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">👕 ملابس</button>
-                <button class="cat-btn" onclick="filterByCategory('shoes', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">👟 أحذية</button>
                 <button class="cat-btn" onclick="filterByCategory('phones', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">📱 هواتف</button>
-                <button class="cat-btn" onclick="filterByCategory('accessories', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">⌚ اكسسوارات</button>
-                <button class="cat-btn" onclick="filterByCategory('electronics', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">⚡ أجهزة</button>
-                <button class="cat-btn" onclick="filterByCategory('home_tools', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">🛋️ منزلية</button>
-                <button class="cat-btn" onclick="filterByCategory('kitchen_tools', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">🍳 مطبخ</button>
+                <button class="cat-btn" onclick="filterByCategory('others', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">📦 أخرى</button>
             </div>
             <div class="products-grid" id="productsContainer"></div>
         </div>
+        <!-- بوابة دخول وتسجيل التجار -->
         <div id="sellerAuthView" style="display: none;">
             <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 450px; margin: 40px auto; text-align: center;">
                 <h2 style="color: #00ffcc;" id="authTitle"><i class="fa-solid fa-key"></i> دخول التجار</h2>
                 <div id="loginForm">
-                    <input type="text" id="loginUsername" placeholder="يوزر التاجر" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px;">
-                    <input type="password" id="loginPassword" placeholder="رمز الدخول" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px;">
-                    <button onclick="loginSeller()" style="width: 100%; background: #00ffcc; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">دخول</button>
+                    <input type="text" id="loginUsername" placeholder="يوزر التاجر" style="width:100%; padding: 12px; margin-bottom: 10px;">
+                    <input type="password" id="loginPassword" placeholder="رمز الدخول" style="width:100%; padding: 12px; margin-bottom: 10px;">
+                    <button onclick="loginSeller()" style="width: 100%; background: #00ffcc; padding: 12px;">دخول</button>
                 </div>
             </div>
         </div>
 
+        <!-- لوحة التحكم للتاجر -->
         <div id="sellerDashboardView" style="display: none;">
             <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 600px; margin: 40px auto;">
                 <h2 style="color: #00ffcc; text-align:center;">إدارة المتجر</h2>
@@ -68,6 +66,7 @@
             </div>
         </div>
 
+        <!-- لوحة تحكم المشرف -->
         <div id="adminView" style="display: none; border: 2px solid #ff3366; padding: 20px; border-radius: 16px; margin-top: 30px;">
             <h2 style="color: #ff3366; text-align: center;">👑 لوحة تحكم المشرف</h2>
             <div id="adminSellersList"></div>
@@ -79,6 +78,7 @@
         </footer>
     </div>
 
+    <!-- استدعاء Firebase والسكربت الخاص بك -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
