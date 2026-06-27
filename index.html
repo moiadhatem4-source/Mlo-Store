@@ -3,36 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLO Store | المنصة الفخمة</title>
+    <title>MLO Store | المنصة المتكاملة</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <!-- استدعاء مكتبة الأيقونات الاحترافية Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- الهيدر والشعار -->
+    <!-- الهيدر وشريط التنقل -->
     <header>
-        <div class="container header-container">
-            <div class="logo" id="mainLogo"><i class="fa-solid : 2026-06-27-gemini-v2-personalization-trigger-placeholder"></i> MLO Store</div>
-            <div class="nav-buttons">
-                <button class="nav-btn" onclick="showStoreFront()"><i class="fa-solid fa-store"></i> المتجر الرئيسي</button>
-                <button class="nav-btn" onclick="switchView('sellerAuthView')"><i class="fa-solid fa-briefcase"></i> بوابة التجار</button>
+        <div class="container header-container" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
+            <div class="logo" id="mainLogo" style="cursor: pointer; font-size: 1.6rem; font-weight: bold; color: #00ffcc;"><i class="fa-solid fa-gem"></i> MLO Store</div>
+            <div class="nav-buttons" style="display: flex; gap: 10px;">
+                <button class="nav-btn" onclick="showStoreFront()" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-store"></i> المتجر الرئيسي</button>
+                <button class="nav-btn" onclick="switchView('sellerAuthView')" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-briefcase"></i> بوابة التجار</button>
             </div>
         </div>
     </header>
 
     <div class="container">
         
-        <!-- 1️⃣ واجهة المتجر الرئيسي / أو بروفايل تاجر معين -->
+        <!-- 1️⃣ واجهة المتجر الرئيسي للزبائن -->
         <div id="storeView">
-            <section class="hero" id="storeHero">
+            <section class="hero" id="storeHero" style="text-align: center; padding: 40px 20px; background: #16161f; border-radius: 12px; margin-bottom: 30px; border: 1px solid #2a2a35;">
                 <h1>MLO Store</h1>
                 <p>تصفح أحدث المنتجات والخدمات الحصرية بأفضل الأسعار</p>
             </section>
 
+            <!-- شريط البحث وأدوات الترتيب -->
+            <div class="search-filter-bar" style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
+                <input type="text" id="searchInput" oninput="searchProducts()" placeholder="بحث عن منتج معين..." style="flex: 1; max-width: 400px; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background: #16161f; color: #fff; font-family: 'Cairo';">
+                <select id="priceSort" onchange="sortProducts()" style="padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background: #16161f; color: #fff; font-family: 'Cairo'; cursor: pointer;">
+                    <option value="default">ترتيب عشوائي</option>
+                    <option value="low">السعر: من الأقل إلى الأعلى</option>
+                    <option value="high">السعر: من الأعلى إلى الأقل</option>
+                </select>
+            </div>
+
+            <!-- شريط أقسام المنتجات الـ 8 الكاملة -->
+            <div class="categories-bar" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+                <button class="cat-btn active-cat" onclick="filterByCategory('all', this)" style="background: #00ffcc; color: #0d0d12; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-border-all"></i> الكل</button>
+                <button class="cat-btn" onclick="filterByCategory('clothes', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-shirt"></i> ملابس</button>
+                <button class="cat-btn" onclick="filterByCategory('shoes', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-shoe-prints"></i> أحذية</button>
+                <button class="cat-btn" onclick="filterByCategory('phones', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-mobile-screen-button"></i> هواتف</button>
+                <button class="cat-btn" onclick="filterByCategory('accessories', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-clock"></i> اكسسوارات</button>
+                <button class="cat-btn" onclick="filterByCategory('electronics', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-plug"></i> أجهزة كهربائية</button>
+                <button class="cat-btn" onclick="filterByCategory('home_tools', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-couch"></i> أدوات منزلية</button>
+                <button class="cat-btn" onclick="filterByCategory('kitchen_tools', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-utensils"></i> أدوات مطبخ</button>
+                <button class="cat-btn" onclick="filterByCategory('others', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-boxes-stacked"></i> أخرى</button>
+            </div>
+
             <div class="products-grid" id="productsContainer">
-                <!-- المنتجات تظهر هنا -->
+                <!-- المنتجات تظهر هنا تلقائياً -->
             </div>
         </div>
 
@@ -40,42 +62,28 @@
         <div id="sellerAuthView" style="display: none;">
             <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 450px; margin: 40px auto; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
                 <h2 style="color: #00ffcc; font-size: 1.8rem;" id="authTitle"><i class="fa-solid fa-key"></i> دخول التجار</h2>
-                <p style="color: #888; margin-bottom: 20px;" id="authDesc">أدخل بياناتك السرية لإدارة إمبراطوريتك</p>
+                <p style="color: #888; margin-bottom: 20px;" id="authDesc">أدخل بياناتك السرية لإدارة منتجاتك</p>
                 
-                <!-- فورم الدخول -->
                 <div id="loginForm" style="text-align: right;">
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-user"></i> اسم المستخدم الفريد (إنجليزي):</label>
-                    <input type="text" id="loginUsername" placeholder="moaid_shop" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
-                    
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-lock"></i> رمز الدخول السري:</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
-                    
-                    <button onclick="loginSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem;">تسجيل الدخول المباشر <i class="fa-solid fa-paper-plane"></i></button>
+                    <input type="text" id="loginUsername" placeholder="اسم المستخدم الفريد (بالإنجليزي) - مثال: moiad_shop" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
+                    <input type="password" id="loginPassword" placeholder="رمز الدخول السري الخاص بك" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
+                    <button onclick="loginSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem; font-family: 'Cairo';">تسجيل الدخول <i class="fa-solid fa-paper-plane"></i></button>
                     <p style="color:#aaa; text-align:center; font-size:0.9rem;">ليس لديك حساب بائع؟ <span onclick="toggleAuthMode(true)" style="color:#00ffcc; cursor:pointer; text-decoration:underline; font-weight: bold;">سجل حساباً جديداً</span></p>
                     <p style="color:#aaa; text-align:center; font-size:0.9rem; margin-top:10px;"><span onclick="forgotPassword()" style="color:#ff3366; cursor:pointer; text-decoration:underline;"><i class="fa-solid fa-circle-question"></i> هل نسيت رمز الدخول؟</span></p>
                 </div>
 
-                <!-- فورم التسجيل الجديد -->
                 <div id="registerForm" style="text-align: right; display:none;">
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-shop"></i> اسم متجرك الفخم:</label>
-                    <input type="text" id="regStoreName" placeholder="مثال: متجر البرنس" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
-                    
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-link"></i> يوزر المتجر (رابطك الخاص - إنجليزي بدون مسافات):</label>
-                    <input type="text" id="regUsername" placeholder="مثال: moiad1" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
-                    
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-lock"></i> اختر رمز دخولك السري:</label>
-                    <input type="password" id="regPassword" placeholder="اكتب كلمة سر تحفظها" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
-                    
-                    <label style="color:#fff; font-weight: bold;"><i class="fa-solid fa-shield-halved"></i> سؤال الأمان (للاسترداد عند النسيان): ما هي لعبتك أو صديقك المفضل؟</label>
-                    <input type="text" id="regSecurityAnswer" placeholder="إجابتك السرية هنا" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 20px; box-sizing: border-box;">
-                    
-                    <button onclick="registerSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem;">إنشاء حساب بائع والانطلاق <i class="fa-solid fa-rocket"></i></button>
+                    <input type="text" id="regStoreName" placeholder="اسم متجرك الفخم - مثال: متجر البرنس" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
+                    <input type="text" id="regUsername" placeholder="يوزر المتجر برابطك الخاص - مثال: moiad1" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
+                    <input type="password" id="regPassword" placeholder="اختر رمز دخول سري للمتجر" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
+                    <input type="text" id="regSecurityAnswer" placeholder="سؤال الأمان للاسترداد: ما هي لعبتك أو صديقك المفضل؟" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 20px; box-sizing: border-box; font-family: 'Cairo';">
+                    <button onclick="registerSeller()" style="width: 100%; background: linear-gradient(135deg, #00ffcc, #00b3ff); color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1rem; font-family: 'Cairo';">إنشاء حساب بائع والانطلاق <i class="fa-solid fa-rocket"></i></button>
                     <p style="color:#aaa; text-align:center; font-size:0.9rem;">لديك حساب بالفعل؟ <span onclick="toggleAuthMode(false)" style="color:#00ffcc; cursor:pointer; text-decoration:underline; font-weight: bold;">سجل دخولك من هنا</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- 3️⃣ لوحة تحكم التاجر بعد تسجيل دخوله بنجاح -->
+        <!-- 3️⃣ لوحة تحكم التاجر (إضافة المنتجات) -->
         <div id="sellerDashboardView" style="display: none;">
             <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 600px; margin: 40px auto; text-align: center;">
                 <h2 style="color: #00ffcc;"><i class="fa-solid fa-sliders"></i> لوحة إدارة متجرك</h2>
@@ -84,47 +92,73 @@
                 
                 <hr style="border:0; border-top:1px solid #2a2a35; margin:25px 0;">
                 
-                <h3 style="color:#fff; text-align:right; margin-bottom:15px;"><i class="fa-solid fa-plus"></i> إضافة منتج جديد إلى رفوفك:</h3>
+                <h3 style="color:#fff; text-align:right; margin-bottom:15px;"><i class="fa-solid fa-plus"></i> إضافة منتج جديد:</h3>
                 <div style="text-align: right;">
-                    <label style="color:#fff;">اسم المنتج:</label>
-                    <input type="text" id="prodName" placeholder="مثال: حساب ببجي مشحون" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    <input type="text" id="prodName" placeholder="اسم المنتج - مثال: قميص تركي فخم" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
                     
-                    <label style="color:#fff;">السعر العملي (SDG):</label>
-                    <input type="number" id="prodPrice" placeholder="مثال: 7500" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box;">
+                    <select id="prodCategory" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family:'Cairo'; font-size:0.95rem;">
+                        <option value="clothes">👕 ملابس</option>
+                        <option value="shoes">👟 أحذية</option>
+                        <option value="phones">📱 هواتف</option>
+                        <option value="accessories">⌚ اكسسوارات</option>
+                        <option value="electronics">⚡ أجهزة كهربائية</option>
+                        <option value="home_tools">🛋️ أدوات منزلية</option>
+                        <option value="kitchen_tools">🍳 أدوات مطبخ</option>
+                        <option value="others">📦 أخرى</option>
+                    </select>
+
+                    <input type="number" id="prodPrice" placeholder="السعر المطلوب بـ (SDG) - مثال: 7500" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 15px; box-sizing: border-box; font-family: 'Cairo';">
                     
-                    <label style="color:#fff;">رابط صورة المنتج (اختياري):</label>
-                    <input type="text" id="prodImage" placeholder="ضع رابط الصورة هنا" style="width:100%; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background:#0d0d12; color:#fff; margin-bottom: 20px; box-sizing: border-box;">
+                    <!-- خانة رفع الملف الجديدة بدلاً من الرابط المزعج -->
+                    <div style="background: #0d0d12; padding: 15px; border-radius: 8px; border: 1px dashed #2a2a35; text-align: center; margin-bottom: 20px;">
+                        <label for="prodImageFile" style="color: #aaa; cursor: pointer; display: block; font-size: 0.9rem;">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: #00ffcc; display: block; margin-bottom: 5px;"></i>
+                            اضغط هنا لرفع صورة المنتج مباشرة من جهازك
+                        </label>
+                        <input type="file" id="prodImageFile" accept="image/*" style="display: none;" onchange="previewImageFile(this)">
+                        <div id="imageFilePreview" style="margin-top: 10px; display: none; color: #00ffcc; font-size: 0.85rem;"><i class="fa-solid fa-circle-check"></i> تم تجهيز الصورة بنجاح!</div>
+                    </div>
                     
-                    <button onclick="handleUploadProduct()" style="width: 100%; background: #00ffcc; color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:1rem;"><i class="fa-solid fa-bolt"></i> نشر المنتج للجميع فوراً</button>
-                    <button onclick="logoutSeller()" style="width: 100%; background: #ff3366; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top:12px;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن</button>
+                    <button onclick="handleUploadProduct()" style="width: 100%; background: #00ffcc; color: #0d0d12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:1rem; font-family: 'Cairo';"><i class="fa-solid fa-bolt"></i> نشر المنتج للجميع فوراً</button>
+                    <button onclick="logoutSeller()" style="width: 100%; background: #ff3366; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top:12px; font-family: 'Cairo';"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن</button>
                 </div>
             </div>
         </div>
 
-        <!-- 4️⃣ لوحة الإدارة العليا السرية (خاصة بـ مويد 👑) -->
+        <!-- 4️⃣ لوحة الإدارة العليا والسرية للمشرف مويد 👑 -->
         <div id="adminView" style="display: none; background: #1a1a26; padding: 30px; border-radius: 16px; border: 1px solid #ff3366; margin-top: 30px; box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);">
-            <h2 style="color: #ff3366; text-align: center; margin-bottom: 5px;"><i class="fa-solid fa-user-shield"></i> لوحة القيادة والتحكم (المشرف مويد)</h2>
-            <p style="color: #aaa; text-align: center; margin-bottom: 25px;">إدارة التجار، التحكم بالشارات، وحذف السجلات المخالفة بنقرة واحدة.</p>
-            
+            <h2 style="color: #ff3366; text-align: center; margin-bottom: 5px;"><i class="fa-solid fa-user-shield"></i> لوحة التحكم العليا (المشرف مويد)</h2>
+            <p style="color: #aaa; text-align: center; margin-bottom: 25px;">إدارة رتب التجار، وتوثيق الحسابات، وحذف المعروضات المخالفة.</p>
             <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
-                <!-- قسم إدارة البائعين والأوائل -->
                 <div style="background:#0d0d12; padding:20px; border-radius:12px; border:1px solid #333;">
-                    <h3 style="color:#00ffcc; margin-bottom:15px;"><i class="fa-solid fa-users"></i> قائمة البائعين المسجلين (مرتبين بالأقدمية)</h3>
+                    <h3 style="color:#00ffcc; margin-bottom:15px;"><i class="fa-solid fa-users"></i> إدارة التجار وتغيير الرتب</h3>
                     <div id="adminSellersList"></div>
                 </div>
-
-                <!-- قسم إدارة جميع المنتجات المعروضة -->
                 <div style="background:#0d0d12; padding:20px; border-radius:12px; border:1px solid #333;">
-                    <h3 style="color:#ff3366; margin-bottom:15px;"><i class="fa-solid fa-box-open"></i> التحكم بكافة معروضات المنصة</h3>
+                    <h3 style="color:#ff3366; margin-bottom:15px;"><i class="fa-solid fa-box-open"></i> التحكم بكافة منتجات المنصة</h3>
                     <div id="adminProductsList"></div>
                 </div>
             </div>
         </div>
+
+        <!-- 5️⃣ قسم الدعم الفني والشكاوى المربوط بواتساب مويد مباشرة (ظاهر وثابت) -->
+        <footer id="globalSupportFooter" style="margin-top: 60px; padding: 30px 0; border-top: 1px solid #2a2a35; text-align: center; display: block !important;">
+            <p style="color: #888; margin-bottom: 15px; font-size: 0.95rem;">هل تواجه مشكلة أو تحتاج دعم فني؟ تواصل مع الإدارة مباشرة</p>
+            <div class="support-buttons" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <a href="https://wa.me/249999928694?text=مرحباً%20الدعم%20الفني%20لمنصة%20MLO%20Store،%20أحتاج%20إلى%20مساعدة" target="_blank" style="background: #25D366; color: #fff; padding: 12px 25px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-family: 'Cairo'; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> مركز الدعم الفني
+                </a>
+                <a href="https://wa.me/249999928694?text=مرحباً%20إدارة%20MLO%20Store،%20أرغب%20في%20تقديم%20شكوى%20بخصوص" target="_blank" style="background: #ff3366; color: #fff; padding: 12px 25px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-family: 'Cairo'; box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);">
+                    <i class="fa-solid fa-triangle-exclamation"></i> قسم الشكاوى والبلاغات
+                </a>
+            </div>
+            <p style="color: #444; margin-top: 20px; font-size: 0.8rem;">&copy; 2026 MLO Store. جميع الحقوق محفوظة.</p>
+        </footer>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>
