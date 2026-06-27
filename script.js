@@ -16,10 +16,8 @@ const database = firebase.database();
 const TELEGRAM_BOT_TOKEN = "8919456647:AAESGivvUguo9qeHVONUBGzL6q62ws9_iyw"; 
 const TELEGRAM_CHAT_ID = "5420681705";
 
-// دالة إرسال الإشعار التلقائي إلى التلجرام
 function sendTelegramNotification(message) {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
-    
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     fetch(url, {
         method: "POST",
@@ -36,6 +34,7 @@ let currentSeller = null;
 let allSellersOrdered = [];
 let rawProductsList = [];
 let selectedCategory = "all";
+let uploadedImageBase64 = ""; // لتخزين كود الصورة المرفوعة مؤقتاً
 
 window.onload = function() {
     database.ref('sellers').orderByChild('timestamp').on('value', (snapshot) => {
@@ -50,18 +49,21 @@ window.onload = function() {
     });
 };
 
+// دالة جلب الشارات والتحقق من الرتب الـ 3 (VIP، مميز، عادي)
 function getSellerBadge(username) {
-    const index = allSellersOrdered.findIndex(s => s.username === username);
     const sellerData = allSellersOrdered.find(s => s.username === username);
+    if (!sellerData) return "";
     
-    let badge = "";
-    if (index !== -1 && index < 5) {
-        badge += ` <span style="background: linear-gradient(135deg, #ffcc00, #ff9900); color: #000; padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 0 8px rgba(255,204,0,0.4);"><i class="fa-solid fa-crown"></i> VIP</span>`;
+    // رتبة VIP: تاج ذهبي
+    if (sellerData.rank === "vip") {
+        return ` <span style="background: linear-gradient(135deg, #ffcc00, #ff9900); color: #000; padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 0 8px rgba(255,204,0,0.4);"><i class="fa-solid fa-crown"></i> VIP</span>`;
     }
-    if (sellerData && sellerData.isPremium) {
-        badge += ` <i class="fa-solid fa-circle-check" style="color: #00b3ff; margin-right: 4px; font-size: 0.95rem;"></i>`;
+    // رتبة مميز: علامة توثيق زرقاء
+    if (sellerData.rank === "premium") {
+        return ` <i class="fa-solid fa-circle-check" style="color: #00b3ff; margin-right: 4px; font-size: 0.95rem;"></i>`;
     }
-    return badge;
+    // عادي: لا شيء
+    return "";
 }
 
 function loadStoreData() {
@@ -76,7 +78,7 @@ function loadStoreData() {
                 document.getElementById('storeHero').innerHTML = `
                     <h1>${seller.storeName} ${badge}</h1>
                     <p>المتجر الرسمي المعتمد للبائع: @${shopUsername}</p>
-                    <button onclick="showStoreFront()" style="background:#00ffcc; color:#0d0d12; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; margin-top:12px;"><i class="fa-solid fa-arrow-left"></i> العودة للمركز المشترك</button>
+                    <button onclick="showStoreFront()" style="background:#00ffcc; color:#0d0d12; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:bold; margin-top:12px; font-family: 'Cairo';"><i class="fa-solid fa-arrow-left"></i> العودة للمركز المشترك</button>
                 `;
                 listenToProducts(shopUsername);
             } else {
@@ -143,7 +145,7 @@ function renderProducts(filterUsername) {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
-            <img src="${imgUrl}" alt="${product.name}">
+            <img src="${imgUrl}" alt="${product.name}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
             <h3>${product.name}</h3>
             <p style="font-size:0.85rem; color:#aaa; margin-bottom: 8px;">التاجر: <a href="?shop=${product.sellerUsername}" style="color:#00ffcc; text-decoration:none; font-weight:bold;">@${product.sellerUsername}</a> ${badge}</p>
             <p class="price">${product.price} SDG</p>
@@ -165,14 +167,12 @@ function sortProducts() {
 
 function filterByCategory(categoryName, element) {
     selectedCategory = categoryName;
-    
     const buttons = document.querySelectorAll('.cat-btn');
     buttons.forEach(btn => {
         btn.style.background = "#16161f";
         btn.style.color = "#fff";
         btn.style.border = "1px solid #2a2a35";
     });
-    
     element.style.background = "#00ffcc";
     element.style.color = "#0d0d12";
     element.style.border = "none";
@@ -181,10 +181,21 @@ function filterByCategory(categoryName, element) {
     renderProducts(urlParams.get('shop'));
 }
 
+// دالة معالجة وتحويل ملف الصورة المرفوع إلى نص Base64
+function previewImageFile(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageBase64 = e.target.result;
+            document.getElementById('imageFilePreview').style.display = "block";
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
 function openOrderModal(seller, prodName, price) {
-    alert(`💡 تفاصيل الطلب الاحترافي:\n\nالمنتج: ${prodName}\nالسعر: ${price} SDG\nالبائع المسؤول: @${seller}\n\nلإكمال عملية الشراء، تواصل مع البائع عبر حسابه أو استخدم أزرار الدعم الفني في أسفل المنصة!`);
-    
-    // إرسال إشعار عند ضغط الزبون على "اطلب الآن"
+    alert(`💡 تفاصيل الطلب:\n\nالمنتج: ${prodName}\nالسعر: ${price} SDG\nالبائع المسؤول: @${seller}\n\nلإكمال عملية الشراء، تواصل مع البائع عبر حسابه أو استخدم أزرار الدعم الفني المتاحة في الأسفل!`);
     sendTelegramNotification(`🛒 *محاولة شراء جديدة!*\n\n• المنتج: ${prodName}\n• السعر: ${price} SDG\n• بائع المنتج: @${seller}`);
 }
 
@@ -213,14 +224,11 @@ function registerSeller() {
                 storeName: storeName,
                 password: password,
                 securityAnswer: securityAnswer,
-                isPremium: false,
+                rank: "normal", // الرتبة الافتراضية عند التسجيل
                 timestamp: Date.now()
             }).then(() => {
                 alert(`تم التسجيل بنجاح!`);
-                
-                // إرسال إشعار عند تسجيل تاجر جديد
                 sendTelegramNotification(`🏪 *تاجر جديد انضم للمنصة!*\n\n• اسم المتجر: ${storeName}\n• اسم المستخدم: @${username}`);
-                
                 toggleAuthMode(false);
             });
         }
@@ -274,7 +282,6 @@ function handleUploadProduct() {
     const name = document.getElementById('prodName').value.trim();
     const cat = document.getElementById('prodCategory').value;
     const price = document.getElementById('prodPrice').value.trim();
-    const image = document.getElementById('prodImage').value.trim();
 
     if (!name || !price) {
         alert("يرجى كتابة اسم المنتج وتحديد السعر!");
@@ -285,17 +292,19 @@ function handleUploadProduct() {
         name: name,
         category: cat,
         price: parseInt(price),
-        image: image,
+        image: uploadedImageBase64, // حفظ الصورة المرفوعة بنجاح كـ كود
         sellerUsername: currentSeller
     }).then(() => {
         alert("تم النشر بنجاح وتبويب المنتج بالقسم الصحيح!");
-        
-        // إرسال إشعار عند رفع منتج جديد
         sendTelegramNotification(`📦 *منتج جديد تم نشره!*\n\n• المنتج: ${name}\n• القسم: ${cat}\n• السعر: ${price} SDG\n• بواسطة التاجر: @${currentSeller}`);
         
+        // تصفير البيانات للعملية القادمة
         document.getElementById('prodName').value = "";
         document.getElementById('prodPrice').value = "";
-        document.getElementById('prodImage').value = "";
+        document.getElementById('prodImageFile').value = "";
+        document.getElementById('imageFilePreview').style.display = "none";
+        uploadedImageBase64 = "";
+        
         showStoreFront();
     });
 }
@@ -305,6 +314,7 @@ function logoutSeller() {
     switchView('sellerAuthView');
 }
 
+// دالة الحل النهائي: تنظف الخانات والروابط وترجعك للرئيسية وتخفي أي لوحة أخرى بدون تعليق
 function showStoreFront() {
     window.history.pushState({}, document.title, window.location.pathname);
     selectedCategory = "all";
@@ -354,10 +364,10 @@ document.getElementById('mainLogo').addEventListener('click', () => {
     clickTimer = setTimeout(() => { clickCount = 0; }, 500);
 });
 
+// تحديث لوحة التحكم لتدوير الحالات الثلاثة: عادي -> مميز -> VIP
 function updateAdminPanel() {
     const sellersListContainer = document.getElementById('adminSellersList');
     const productsListContainer = document.getElementById('adminProductsList');
-    
     if (!sellersListContainer || !productsListContainer) return;
 
     sellersListContainer.innerHTML = "";
@@ -370,6 +380,7 @@ function updateAdminPanel() {
             
             let rankText = `[#${index + 1}]`;
             let badgeText = getSellerBadge(seller.username);
+            let currentRank = seller.rank ? seller.rank : "normal";
 
             item.innerHTML = `
                 <div>
@@ -379,10 +390,10 @@ function updateAdminPanel() {
                     ${badgeText}
                 </div>
                 <div>
-                    <button onclick="togglePremiumSeller('${seller.username}', ${seller.isPremium})" style="background:#00b3ff; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; margin-left:5px;">
-                        ${seller.isPremium ? '<i class="fa-solid fa-circle-minus"></i> إلغاء التوثيق' : '<i class="fa-solid fa-circle-check"></i> توثيق'}
+                    <button onclick="cycleSellerRank('${seller.username}', '${currentRank}')" style="background:#00b3ff; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold; margin-left:5px; font-family:'Cairo'; font-size:0.8rem;">
+                        <i class="fa-solid fa-arrows-spin"></i> تغيير الرتبة (الحالية: ${currentRank})
                     </button>
-                    <button onclick="deleteSellerAccount('${seller.username}')" style="background:#ff3366; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-trash"></i> حذف</button>
+                    <button onclick="deleteSellerAccount('${seller.username}')" style="background:#ff3366; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `;
             sellersListContainer.appendChild(item);
@@ -410,8 +421,16 @@ function updateAdminPanel() {
     });
 }
 
-function togglePremiumSeller(username, currentStatus) {
-    database.ref('sellers').child(username).update({ isPremium: !currentStatus }).then(() => alert("تم تحديث الرتبة!"));
+// دالة تدوير الرتب الثلاثية الذكية بناء على طلبك
+function cycleSellerRank(username, currentRank) {
+    let nextRank = "normal";
+    if (currentRank === "normal") nextRank = "premium";
+    else if (currentRank === "premium") nextRank = "vip";
+    else if (currentRank === "vip") nextRank = "normal";
+
+    database.ref('sellers').child(username).update({ rank: nextRank }).then(() => {
+        alert(`تم تغيير رتبة البائع @${username} بنجاح إلى: ${nextRank}`);
+    });
 }
 
 function deleteSellerAccount(username) {
@@ -425,4 +444,3 @@ function deleteProductAdmin(key) {
         database.ref('products').child(key).remove().then(() => alert("تم حذف المنتج."));
     }
 }
-
