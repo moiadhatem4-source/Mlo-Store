@@ -1,0 +1,139 @@
+/* الإعدادات العامة والألوان الأساسية للمنصة */
+:root {
+    --bg-dark: #0d0d12;
+    --card-dark: #16161f;
+    --text-main: #ffffff;
+    --text-muted: #a0a0b0;
+    --primary: #00ffcc;
+    --primary-hover: #00cc99;
+    --danger: #ff4d4d;
+    --border-color: #262636;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* الهيدر والشعار */
+header {
+    background-color: var(--card-dark);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 18px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Cairo', sans-serif;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(0, 255, 204, 0.05);
+}
+
+/* قسم الترحيب البانر الرئيسي */
+.hero {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(180deg, var(--card-dark) 0%, var(--bg-dark) 100%);
+    border-radius: 16px;
+    margin-top: 25px;
+    border: 1px solid var(--border-color);
+}
+
+.hero h1 {
+    font-size: 2.2rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* شبكة عرض المنتجات */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* بوابة التجار */
+.seller-portal {
+    background-color: var(--card-dark);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    border-radius: 16px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.seller-portal h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.seller-portal p {
+    color: var(--text-muted);
+}
+
+/* استعلامات الشاشات للتوافق مع الهواتف */
+@media (max-width: 600px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .hero h1 {
+        font-size: 1.7rem;
+    }
+}
+
