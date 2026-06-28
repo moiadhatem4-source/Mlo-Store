@@ -2,85 +2,63 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLO Store | المنصة المتكاملة</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>MLO Store</title>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0d0d12; color: #fff; margin: 0; padding: 20px; }
+        .view { display: none; } /* إخفاء الكل افتراضياً */
+        .active { display: block; } /* إظهار الواجهة النشطة */
+        .header { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid #333; }
+        button { cursor: pointer; padding: 10px 20px; border-radius: 8px; border: none; background: #00ffcc; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="container header-container" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
-            <div class="logo" id="mainLogo" style="cursor: pointer; font-size: 1.6rem; font-weight: bold; color: #00ffcc;"><i class="fa-solid fa-gem"></i> MLO Store</div>
-            <div class="nav-buttons" style="display: flex; gap: 10px;">
-                <button class="nav-btn" onclick="showStoreFront()" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-store"></i> المتجر الرئيسي</button>
-                <button class="nav-btn" onclick="switchView('sellerAuthView')" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo';"><i class="fa-solid fa-briefcase"></i> بوابة التجار</button>
-            </div>
-        </div>
+
+    <header class="header">
+        <div class="logo">MLO Store</div>
+        <nav>
+            <button onclick="showView('storeView')">المتجر</button>
+            <button onclick="showView('sellerAuthView')">بوابة التجار</button>
+        </nav>
     </header>
-    <div class="container">
-        <div id="storeView">
-            <section class="hero" id="storeHero" style="text-align: center; padding: 40px 20px; background: #16161f; border-radius: 12px; margin-bottom: 30px; border: 1px solid #2a2a35;">
-                <h1>MLO Store</h1>
-                <p>تصفح أحدث المنتجات والخدمات الحصرية بأفضل الأسعار</p>
-            </section>
 
-            <div class="search-filter-bar" style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center;">
-                <input type="text" id="searchInput" oninput="searchProducts()" placeholder="بحث عن منتج معين..." style="flex: 1; max-width: 400px; padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background: #16161f; color: #fff; font-family: 'Cairo';">
-                <select id="priceSort" onchange="sortProducts()" style="padding: 12px; border-radius: 8px; border: 1px solid #2a2a35; background: #16161f; color: #fff; font-family: 'Cairo'; cursor: pointer;">
-                    <option value="default">ترتيب عشوائي</option>
-                    <option value="low">السعر: من الأقل</option>
-                    <option value="high">السعر: من الأعلى</option>
-                </select>
-            </div>
-
-            <div class="categories-bar" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
-                <button class="cat-btn" onclick="filterByCategory('all', this)" style="background: #00ffcc; color: #0d0d12; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">الكل</button>
-                <button class="cat-btn" onclick="filterByCategory('clothes', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">👕 ملابس</button>
-                <button class="cat-btn" onclick="filterByCategory('phones', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">📱 هواتف</button>
-                <button class="cat-btn" onclick="filterByCategory('others', this)" style="background: #16161f; color: #fff; border: 1px solid #2a2a35; padding: 10px 20px; border-radius: 20px; font-family: 'Cairo';">📦 أخرى</button>
-            </div>
-            <div class="products-grid" id="productsContainer"></div>
-        </div>
-        <!-- بوابة دخول وتسجيل التجار -->
-        <div id="sellerAuthView" style="display: none;">
-            <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 450px; margin: 40px auto; text-align: center;">
-                <h2 style="color: #00ffcc;" id="authTitle"><i class="fa-solid fa-key"></i> دخول التجار</h2>
-                <div id="loginForm">
-                    <input type="text" id="loginUsername" placeholder="يوزر التاجر" style="width:100%; padding: 12px; margin-bottom: 10px;">
-                    <input type="password" id="loginPassword" placeholder="رمز الدخول" style="width:100%; padding: 12px; margin-bottom: 10px;">
-                    <button onclick="loginSeller()" style="width: 100%; background: #00ffcc; padding: 12px;">دخول</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- لوحة التحكم للتاجر -->
-        <div id="sellerDashboardView" style="display: none;">
-            <div class="seller-portal" style="background: #16161f; padding: 30px; border-radius: 16px; border: 1px solid #2a2a35; max-width: 600px; margin: 40px auto;">
-                <h2 style="color: #00ffcc; text-align:center;">إدارة المتجر</h2>
-                <div id="sellerAvatarContainer"></div>
-                <div id="sellerOrdersContainer" style="background: #0d0d12; padding: 15px; border-radius: 8px; border: 1px solid #ff9900; margin-bottom: 20px;">
-                    <h3 style="color:#ff9900;">الطلبات الواردة:</h3>
-                </div>
-                <button onclick="logoutSeller()" style="width: 100%; background: #ff3366; color: #fff; padding: 10px; border-radius: 8px;">تسجيل الخروج</button>
-            </div>
-        </div>
-
-        <!-- لوحة تحكم المشرف -->
-        <div id="adminView" style="display: none; border: 2px solid #ff3366; padding: 20px; border-radius: 16px; margin-top: 30px;">
-            <h2 style="color: #ff3366; text-align: center;">👑 لوحة تحكم المشرف</h2>
-            <div id="adminSellersList"></div>
-            <div id="adminProductsList"></div>
-        </div>
-
-        <footer style="margin-top: 60px; padding: 30px 0; border-top: 1px solid #2a2a35; text-align: center;">
-            <a href="https://wa.me/249999928694" target="_blank" style="background: #25D366; color: #fff; padding: 12px 25px; border-radius: 8px; text-decoration: none;">💬 مركز الدعم الفني</a>
-        </footer>
+    <!-- واجهة المتجر -->
+    <div id="storeView" class="view active">
+        <h1>مرحباً بك في المتجر</h1>
+        <p>هنا ستظهر المنتجات...</p>
     </div>
 
-    <!-- استدعاء Firebase والسكربت الخاص بك -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="script.js"></script>
+    <!-- واجهة دخول التجار -->
+    <div id="sellerAuthView" class="view">
+        <h1>دخول التجار</h1>
+        <input type="text" id="user" placeholder="اليوزر">
+        <button onclick="login()">دخول</button>
+    </div>
+
+    <!-- واجهة لوحة تحكم التاجر -->
+    <div id="sellerDashboardView" class="view">
+        <h1>لوحة تحكم التاجر</h1>
+        <button onclick="showView('storeView')">خروج</button>
+    </div>
+
+    <script>
+        // دالة التبديل الذكية
+        function showView(viewId) {
+            // 1. إخفاء جميع الواجهات
+            const views = document.querySelectorAll('.view');
+            views.forEach(view => view.classList.remove('active'));
+
+            // 2. إظهار الواجهة المطلوبة فقط
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+
+        // دالة تجريبية للدخول
+        function login() {
+            alert("تم تسجيل الدخول!");
+            showView('sellerDashboardView');
+        }
+    </script>
 </body>
 </html>
